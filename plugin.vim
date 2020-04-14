@@ -1,4 +1,4 @@
-let g:charta_hostname="https://www.charta.dev"
+let g:charta_hostname="http://localhost:4000"
 let g:charta_api_url=g:charta_hostname . "/api/v1/tours"
 let g:charta_current_tour=""
 
@@ -68,11 +68,7 @@ function! Charta_show_socket()
   echo v:servername
 endfunction
 
-if !exists('g:Charta_no_bindings')
-  let g:Charta_no_bindings=0
-endif
-
-if g:Charta_no_bindings == 0
+if g:Charta_no_bindings != 1
   nnoremap <Leader>cs :call Charta_set_current_tour()<CR>
   nnoremap <Leader>ca :call Charta_add_node()<CR>
   vnoremap <Leader>ca :<c-u>call Charta_add_node_visual()<CR>
