@@ -9,7 +9,7 @@ It allows you to create code documentation, maps & tours straight for your edito
 Add the following lines to your `.vimrc`:
 
 ```
-Bundle 'ChartaDev/vim'
+Bundle 'ChartaDev/charta.vim'
 ```
 
 #### Requirements:
