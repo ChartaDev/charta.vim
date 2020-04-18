@@ -14,21 +14,25 @@ Bundle 'ChartaDev/charta.vim'
 
 #### Requirements:
 
-- `curl` must be installed.
+- `curl` must be installed and available in your PATH.
 
-## Default bindings:
+## Bindings:
 
-- `<Leader>cs` - Sets current Charta to edit
-- `<Leader>ca` - Adds snippet to charta (current line or visual selection)
+The following bindings are set four you:
 
-If you want to set up your own bindings, then add to your vimrc:
+```vim
+nnoremap <Leader>ca :ChartaAddNode<CR> " Add node in normal mode
+vnoremap <Leader>ca :ChartaAddNode<CR> " Add node in visual mode (multiple lines)
+```
+
+If you would like to set your own bindings, you can skip the default ones with:
 
 ```
 let g:Charta_no_bindings = 1
 ```
 
-And then set your bindings to:
+## Available commands:
 
-- ```noremap <Leader>cs :call Charta_set_current_tour``` - Set current charta id
-- ```noremap <Leader>ca :call Charta_set_current_tour``` - Add snippet in normal mode
-- ```vnoremap <Leader>cs :call Charta_set_current_tour``` - Add snippet in visual mode
+- `ChartaSetTour <tour url or id>` - Sets target Charta to edit
+- `ChartaCurrentTour` - Prints current Charta id.
+- `ChartaAddNode` - Adds a code snippet to the current Charta.

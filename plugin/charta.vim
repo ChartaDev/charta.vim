@@ -1,6 +1,8 @@
-let g:charta_hostname="https://www.charta.dev"
-let g:charta_api_url=g:charta_hostname . "/api/v1/tours"
-let g:charta_current_tour=""
+let s:charta_hostname="https://www.charta.dev"
+let s:charta_api_url=s:charta_hostname . "/api/v1/tours"
+let s:charta_current_tour=""
+
+" Utilities {{{
 
 function! s:to_json(object)
   if type(a:object) == type('')
@@ -19,34 +21,48 @@ function! s:to_json(object)
   endif
 endfunction
 
-function! s:get_visual_selection()
-  let [line_start, column_start] = getpos("'<")[1:2]
-  let [line_end, column_end] = getpos("'>")[1:2]
-  let lines = getline(line_start, line_end)
-  if len(lines) == 0
-    return ''
-  endif
-  let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
-  let lines[0] = lines[0][column_start - 1:]
-  return join(lines, "\n")
-endfunction
+" }}}
 
-function! Charta_set_current_tour()
-  let g:charta_current_tour=input("Enter Charta Id:")
-  let l:tour_url=g:charta_hostname . "/tours/" . g:charta_current_tour
+function! s:set_tour_id(...)
+  if a:0 == 1 && !empty(a:1)
+    let l:tour_id=a:1
+  else
+    let l:tour_id=input("Enter Charta URL (leave empty to cancel):")
+
+    if empty(l:tour_id)
+      return
+    endif
+  end
+
+  let l:tour_id = split(l:tour_id, "/")[-1] " Allow passing in URL
+
+  let s:charta_current_tour=l:tour_id
+  let l:tour_url=s:charta_hostname . "/tours/" . s:charta_current_tour
   silent execute "!open " . l:tour_url
 endfunction
 
-function! s:add_node(contents)
-  if empty(g:charta_current_tour)
-    call Charta_set_current_tour()
-    return
+function! s:print_current_tour_id()
+  if empty(s:charta_current_tour)
+    echo "No currently active tour. Use :ChartaSetTour to choose one."
+  else
+    echo "Tour ID:" . s:charta_current_tour
   endif
+endfunction
 
-  let l:endpoint = g:charta_api_url . "/" . g:charta_current_tour . "/add_node"
+function! s:add_node() range
+  if empty(s:charta_current_tour)
+    call s:set_tour_id()
+    if empty(s:charta_current_tour)
+      return
+    endif
+  endif
+  let l:lines = getline(a:firstline, a:lastline)
+  let l:contents = join(l:lines, "\n")
+
+  let l:endpoint = s:charta_api_url . "/" . s:charta_current_tour . "/add_node"
   let l:headers ="-H 'Content-Type: application/json' -H 'Accept: application/json'"
   let l:method ="-X PUT"
-  let l:payload = {'line': line('.'), 'contents': a:contents, 'path': @%}
+  let l:payload = {'line': a:firstline, 'contents': l:contents, 'path': @%}
   let l:data = "--data " . shellescape(s:to_json(payload), 1)
   let l:cmd = join(["curl", l:headers, l:method, l:data, l:endpoint], " ")
 
@@ -54,26 +70,23 @@ function! s:add_node(contents)
   silent execute "!" . l:cmd
 endfunction
 
-function! Charta_add_node()
-  let l:contents = getline(".")
-  call s:add_node(l:contents)
-endfunction
+" Public API {{{
 
-function! Charta_add_node_visual()
-  let l:contents = s:get_visual_selection()
-  call s:add_node(l:contents)
-endfunction
+command! ChartaConfigureEditor :echo v:servername
+command! ChartaCurrentTour :echo <SID>print_current_tour_id()
+command! -nargs=? ChartaSetTour :call <SID>set_tour_id(<q-args>)
+command! -range ChartaAddNode <line1>,<line2>call <SID>add_node()
 
-function! Charta_show_socket()
-  echo v:servername
-endfunction
+" }}}
+" Bindings {{{
 
 if !exists('g:Charta_no_bindings')
   let g:Charta_no_bindings=0
 endif
 
 if g:Charta_no_bindings == 0
-  nnoremap <Leader>cs :call Charta_set_current_tour()<CR>
-  nnoremap <Leader>ca :call Charta_add_node()<CR>
-  vnoremap <Leader>ca :<c-u>call Charta_add_node_visual()<CR>
+  nnoremap <Leader>ca :ChartaAddNode<CR>
+  vnoremap <Leader>ca :ChartaAddNode<CR>
 endif
+
+" }}}
