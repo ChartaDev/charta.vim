@@ -35,6 +35,6 @@ let g:Charta_no_bindings = 1
 
 ## Available commands:
 
-- `ChartaSetTour <tour url or id>` - Sets target Charta to edit
-- `ChartaCurrentTour` - Prints current Charta id.
-- `ChartaAddNode` - Adds a code snippet to the current Charta.
+- `:ChartaSetTour <tour url or id>` - Sets target Charta to edit
+- `:ChartaCurrentTour` - Prints current Charta id.
+- `:ChartaAddNode` - Adds a code snippet to the current Charta.
