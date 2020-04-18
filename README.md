@@ -4,6 +4,8 @@ This is [Charta](https://www.charta.dev)'s official vim plugin.
 
 It allows you to create code documentation, maps & tours straight for your editor.
 
+![preview](https://user-images.githubusercontent.com/2349448/79638545-d6a11f00-817d-11ea-92da-087b77918063.png)
+
 #### Instalation with Vundle:
 
 Add the following lines to your `.vimrc`:
@@ -21,8 +23,8 @@ Bundle 'ChartaDev/charta.vim'
 The following bindings are set four you:
 
 ```vim
-nnoremap <Leader>ca :ChartaAddNode<CR> " Add node in normal mode
-vnoremap <Leader>ca :ChartaAddNode<CR> " Add node in visual mode (multiple lines)
+nnoremap <Leader>ca :ChartaAddNode<CR>
+vnoremap <Leader>ca :ChartaAddNode<CR>
 ```
 
 If you would like to set your own bindings, you can skip the default ones with:
