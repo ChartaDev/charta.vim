@@ -38,7 +38,8 @@ function! s:set_tour_id(...)
 
   let s:charta_current_tour=l:tour_id
   let l:tour_url=s:charta_hostname . "/tours/" . s:charta_current_tour
-  silent execute "!open " . l:tour_url
+  silent execute "!which open && open " . l:tour_url
+  silent execute "!which xdg-open && xdg-open " . l:tour_url
 endfunction
 
 function! s:print_current_tour_id()
@@ -62,7 +63,7 @@ function! s:add_node() range
   let l:endpoint = s:charta_api_url . "/" . s:charta_current_tour . "/add_node"
   let l:headers ="-H 'Content-Type: application/json' -H 'Accept: application/json'"
   let l:method ="-X PUT"
-  let l:payload = {'line': a:firstline, 'contents': l:contents, 'path': @%}
+  let l:payload = {'line': a:firstline, 'contents': l:contents, 'path': @%, 'editor': 'vim'}
   let l:data = "--data " . shellescape(s:to_json(payload), 1)
   let l:cmd = join(["curl", l:headers, l:method, l:data, l:endpoint], " ")
 
