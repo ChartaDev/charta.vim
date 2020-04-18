@@ -27,7 +27,7 @@ vnoremap <Leader>ca :ChartaAddNode<CR> " Add node in visual mode (multiple lines
 
 If you would like to set your own bindings, you can skip the default ones with:
 
-```
+```vim
 let g:Charta_no_bindings = 1
 ```
 
