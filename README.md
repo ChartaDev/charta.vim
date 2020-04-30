@@ -14,6 +14,12 @@ Add the following lines to your `.vimrc`:
 Plugin 'ChartaDev/charta.vim'
 ```
 
+And set your token with (only required to access private chartas):
+
+```
+let g:charta_api_token="<YOUR-TOKEN>"
+```
+
 #### Requirements:
 
 - `curl` must be installed and available in your PATH.
@@ -36,5 +42,5 @@ let g:Charta_no_bindings = 1
 ## Available commands:
 
 - `:ChartaSetTour <tour url or id>` - Sets target Charta to edit
-- `:ChartaCurrentTour` - Prints current Charta id.
+- `:ChartaShowTour` - Prints current Charta id.
 - `:ChartaAddNode` - Adds a code snippet to the current Charta.

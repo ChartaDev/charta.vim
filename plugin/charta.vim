@@ -1,6 +1,13 @@
 let s:charta_hostname="https://www.charta.dev"
 let s:charta_api_url=s:charta_hostname . "/api/v1/tours"
-let s:charta_current_tour=""
+
+if !exists('s:charta_current_tour')
+  let s:charta_current_tour=""
+endif
+
+if !exists('g:charta_api_token')
+  let g:charta_api_token=""
+endif
 
 " Utilities {{{
 
@@ -61,7 +68,7 @@ function! s:add_node() range
   let l:contents = join(l:lines, "\n")
 
   let l:endpoint = s:charta_api_url . "/" . s:charta_current_tour . "/add_node"
-  let l:headers ="-H 'Content-Type: application/json' -H 'Accept: application/json'"
+  let l:headers ="-H 'Content-Type: application/json' -H 'Accept: application/json' -H 'x-api-key: " . g:charta_api_token."'"
   let l:method ="-X PUT"
   let l:payload = {'line': a:firstline, 'contents': l:contents, 'path': @%, 'editor': 'vim'}
   let l:data = "--data " . shellescape(s:to_json(payload), 1)
@@ -74,7 +81,7 @@ endfunction
 " Public API {{{
 
 command! ChartaConfigureEditor :echo v:servername
-command! ChartaCurrentTour :echo <SID>print_current_tour_id()
+command! ChartaShowTour :echo <SID>print_current_tour_id()
 command! -nargs=? ChartaSetTour :call <SID>set_tour_id(<q-args>)
 command! -range ChartaAddNode <line1>,<line2>call <SID>add_node()
 
