@@ -1,4 +1,4 @@
-let s:charta_hostname="https://www.charta.dev"
+let s:charta_hostname="http://localhost:4000"
 let s:charta_api_url=s:charta_hostname . "/api/v1/tours"
 
 if !exists('s:charta_current_tour')
@@ -9,27 +9,7 @@ if !exists('g:charta_api_token')
   let g:charta_api_token=""
 endif
 
-" Utilities {{{
-
-function! s:to_json(object)
-  if type(a:object) == type('')
-    let l:str = substitute(a:object, "[\001-\031\"\\\\]", '\=printf("\\u%04x", char2nr(submatch(0)))', 'g')
-    return '"' . l:str . '"'
-  elseif type(a:object) == type([])
-    return '['.join(map(copy(a:object), 's:to_json(v:val)'),', ').']'
-  elseif type(a:object) == type({})
-    let pairs = []
-    for key in keys(a:object)
-      call add(pairs, s:to_json(key) . ': ' . s:to_json(a:object[key]))
-    endfor
-    return '{' . join(pairs, ', ') . '}'
-  else
-    return string(a:object)
-  endif
-endfunction
-
-" }}}
-
+" Implementation {{{
 function! s:set_tour_id(...)
   if a:0 == 1 && !empty(a:1)
     let l:tour_id=a:1
@@ -64,20 +44,21 @@ function! s:add_node() range
       return
     endif
   endif
+
   let l:lines = getline(a:firstline, a:lastline)
   let l:contents = join(l:lines, "\n")
+  let l:full_path = expand('%:p')
+  let l:payload = {'line': a:firstline, 'contents': l:contents, 'path': @%, 'editor': 'vim', 'full_path': l:full_path}
 
-  let l:endpoint = s:charta_api_url . "/" . s:charta_current_tour . "/add_node"
-  let l:headers ="-H 'Content-Type: application/json' -H 'Accept: application/json' -H 'x-api-key: " . g:charta_api_token."'"
-  let l:method ="-X PUT"
-  let l:payload = {'line': a:firstline, 'contents': l:contents, 'path': @%, 'editor': 'vim'}
-  let l:data = "--data " . shellescape(s:to_json(payload), 1)
-  let l:cmd = join(["curl", l:headers, l:method, l:data, l:endpoint], " ")
+  let l:response = charta#client#add_node(s:charta_current_tour, payload)
 
-  echo "Node added."
-  silent execute "!" . l:cmd
+  if response['status'] == 200
+    echo "Node added."
+  else
+    echo "Could not add node - " . response['content']['error']
+  end
 endfunction
-
+" }}}
 " Public API {{{
 
 command! ChartaConfigureEditor :echo v:servername
