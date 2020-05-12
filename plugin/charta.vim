@@ -1,5 +1,4 @@
-let s:charta_hostname="http://localhost:4000"
-let s:charta_api_url=s:charta_hostname . "/api/v1/tours"
+let s:charta_hostname="https://www.charta.dev"
 
 if !exists('s:charta_current_tour')
   let s:charta_current_tour=""
