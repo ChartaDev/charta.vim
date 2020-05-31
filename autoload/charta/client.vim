@@ -1,5 +1,4 @@
-let s:charta_hostname="https://www.charta.dev"
-let s:charta_api_url=s:charta_hostname . "/api/v1"
+let s:charta_api_url=g:charta_hostname . "/api/v1"
 
 if !exists('g:charta_api_token')
   let g:charta_api_token=""
