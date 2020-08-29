@@ -8,7 +8,8 @@ function! s:make_headers()
   return {
 \    'Content-Type': 'application/json',
 \    'Accept': 'application/json',
-\    'x-api-key': g:charta_api_token
+\    'x-api-key': g:charta_api_token,
+\    'editor': 'vim'
 \  }
 endfunction
 
