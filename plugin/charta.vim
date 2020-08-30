@@ -15,12 +15,18 @@ endif
 " Implementation {{{
 function! s:get_git_info()
   let res = system("git remote -v")
-  let root = system("git rev-parse --show-toplevel")
   if v:shell_error
     return {"error": res}
-  else
-    return {"remotes": split(res, "\n"), "root": root}
   endif
+  let root = system("git rev-parse --show-toplevel")
+  if v:shell_error
+    return {"error": root}
+  endif
+  let sha = system("git rev-parse HEAD")
+  if v:shell_error
+    return {"error": sha}
+  endif
+  return {"remotes": split(res, "\n"), "root": root, "sha": sha}
 endfunction
 
 function! s:set_tour_id(...)
