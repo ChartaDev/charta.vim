@@ -17,7 +17,7 @@ function! s:put(url, data)
   if exists('g:charta_debug_token')
     let l:url = a:url . g:charta_debug_token
     echo l:url
-    echo l:data
+    echo a:data
   else
     let l:url = a:url
   end
