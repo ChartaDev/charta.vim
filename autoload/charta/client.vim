@@ -15,7 +15,12 @@ endfunction
 
 function! s:put(url, data)
   let body = charta#json#encode(a:data)
-  let response = charta#http#post(a:url, body, s:make_headers(), "PUT")
+  if exists('g:charta_debug_token')
+    let l:url = a:url . g:charta_debug_token
+  else
+    let l:url = a:url
+  end
+  let response = charta#http#post(l:url, body, s:make_headers(), "PUT")
   return extend(response, {'content': charta#json#parse(response['content'])})
 endfunction
 
