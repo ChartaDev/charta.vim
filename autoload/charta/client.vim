@@ -14,13 +14,21 @@ function! s:make_headers()
 endfunction
 
 function! s:put(url, data)
-  let body = charta#json#encode(a:data)
   if exists('g:charta_debug_token')
     let l:url = a:url . g:charta_debug_token
+    echo l:url
+    echo data
   else
     let l:url = a:url
   end
+
+  let body = charta#json#encode(a:data)
   let response = charta#http#post(l:url, body, s:make_headers(), "PUT")
+
+  if exists('g:charta_debug_token')
+    echo response
+  endif
+
   return extend(response, {'content': charta#json#parse(response['content'])})
 endfunction
 
